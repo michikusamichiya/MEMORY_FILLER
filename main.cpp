@@ -1,51 +1,31 @@
 #include <iostream>
 #include <vector>
-#include <chrono>
-#include <thread>
+using namespace std;
 
-void countdown(int seconds) {
-    for (int i = seconds; i > 0; --i) {
-        std::cout << "Continue " << i << "left..." << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        std::cout << "\x1B[1A";
-        std::cout << "\x1B[K";
-    }
-    std::cout << "Starting..." << std::endl;
-}
-
-void StackMemory(char option) {
-    std::vector<int64_t*> memory_blocks;
-    long long block_count = 0;
-
+void memoryArea() {
+    vector<int*> memorys;
+    int* p = new int[10000000];
     try {
         while (true) {
-            int64_t* block = new int64_t[104857600];
-            memory_blocks.push_back(block);
-            block_count++;
-            if (option == 'y') {
-                std::cout << "Memory block: " << "1Mib * " << block_count << std::endl;
+            for (int i = 0; i < 100000; i++) {
+                int* p = new int[10000000];
+                memorys.push_back(p);
             }
         }
     }
-    catch (std::bad_alloc& e) {
-        std::cerr << "Memory Error:  " << e.what() << std::endl;
-        std::cerr << "Reserved memory blocks: " << block_count << std::endl;
-        countdown(10);
+    catch (bad_alloc& e) {
+        memoryArea();
     }
 }
 
 int main() {
-    using namespace std;
+    vector<int*> memory_hogs;
+    cout << "This program consumes memory very quickly. Do you want to continue?(y,n): ";
     char it;
-    cout << "<WARNING>This program consumes memory very quickly. Do you want to continue?(y,n): ";
     cin >> it;
-    if (it == 'y') {
-        cout << "Show stuck memory during execution?(y,n): ";
-        char opt;
-        cin >> opt;
-        cout << "Press Ctrl + c to stop this program. However, it will take some time to finish." << endl;
-        countdown(5);
-        StackMemory(opt);
-    }
+    cout << "Press Ctrl + c to stop this program. However, it will take some time to finish.\n";
+    if (it != 'y') return 0;
+    memoryArea();
+
     return 0;
 }
